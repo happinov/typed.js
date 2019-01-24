@@ -149,7 +149,7 @@ export default class Typed {
       // check for skip characters formatted as
       // "this is a `string to print NOW` ..."
       if (substr.charAt(0) === '`') {
-        while (curString.substr(curStrPos + numChars).charAt(0) !== '`') {
+        while ((curString.substr(curStrPos + numChars).charAt(0) !== '`') && (curStrPos + numChars < curString.length)) {
           numChars++;
           if (curStrPos + numChars > curString.length) break;
         }
