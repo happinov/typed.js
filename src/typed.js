@@ -125,7 +125,13 @@ export default class Typed {
     // contain typing function in a timeout humanize'd delay
     this.timeout = setTimeout(() => {
       // skip over any HTML chars
+      const initialCurStrPos = curStrPos;
+      let dispatchEvent = true;
       curStrPos = htmlParser.typeHtmlChars(curString, curStrPos, this);
+      if (curStrPos !== initialCurStrPos) {
+          // Do not dispatch typed event if HTML chars are being printed
+          dispatchEvent = false;
+      }
 
       let pauseTime = 0;
       let substr = curString.substr(curStrPos);
@@ -176,6 +182,12 @@ export default class Typed {
         if (this.temporaryPause) {
           this.temporaryPause = false;
           this.options.onTypingResumed(this.arrayPos, this);
+        }
+
+        if ((dispatchEvent === true)&&(curString.charAt(curStrPos) !== '')){
+          const event = new CustomEvent('typed', {detail: {char: curString.charAt(curStrPos)}});
+          // Dispatch a custom event with printed char in detail property
+          this.el.dispatchEvent(event);
         }
       }, pauseTime);
 
